@@ -38,4 +38,33 @@ describe('CreateGoal', () => {
     // the check is done inside beforeEach
     // blockchain and createGoal are ready to use
   });
+
+  it('should set description', async () => {
+    const owner = await blockchain.treasury('owner');
+
+    const descriptionBefore = await createGoal.getDescription();
+
+    expect(descriptionBefore).toBe('');
+
+    const createdGoal = await createGoal.send(
+      owner.getSender(),
+      {
+        value: toNano('0.02'),
+      },
+      {
+        $$type: 'Goal',
+        description: 'test',
+      },
+    );
+
+    expect(createdGoal.transactions).toHaveTransaction({
+      from: owner.address,
+      to: createGoal.address,
+      success: true,
+    });
+
+    const descriptionAfter = await createGoal.getDescription();
+
+    expect(descriptionAfter).toBe('test');
+  });
 });

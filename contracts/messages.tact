@@ -1,0 +1,3 @@
+message Goal {
+  description: String;
+}
