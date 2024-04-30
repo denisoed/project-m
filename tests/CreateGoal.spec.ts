@@ -11,7 +11,7 @@ describe('CreateGoal', () => {
   beforeEach(async () => {
     blockchain = await Blockchain.create();
 
-    createGoal = blockchain.openContract(await CreateGoal.fromInit());
+    createGoal = blockchain.openContract(await CreateGoal.fromInit(0n));
 
     deployer = await blockchain.treasury('deployer');
 
@@ -39,21 +39,21 @@ describe('CreateGoal', () => {
     // blockchain and createGoal are ready to use
   });
 
-  it('should set description', async () => {
+  it('should successfully create goal', async () => {
     const owner = await blockchain.treasury('owner');
-
-    const descriptionBefore = await createGoal.getDescription();
-
-    expect(descriptionBefore).toBe('');
-
     const createdGoal = await createGoal.send(
       owner.getSender(),
       {
         value: toNano('0.02'),
       },
       {
-        $$type: 'Goal',
+        $$type: 'MCreateGoal',
+        id: 0n,
+        owner: owner.address,
         description: 'test',
+        confirmations: 2n,
+        reward: 1n,
+        confirmed: false,
       },
     );
 
@@ -62,9 +62,17 @@ describe('CreateGoal', () => {
       to: createGoal.address,
       success: true,
     });
+  });
 
-    const descriptionAfter = await createGoal.getDescription();
+  describe('Default state', () => {
+    it('should be false "confirmed"', async () => {
+      const goalDefault = await createGoal.getGoal();
+      expect(goalDefault.confirmed).toBe(false);
+    });
 
-    expect(descriptionAfter).toBe('test');
+    it('should be empty string "description"', async () => {
+      const goalDefault = await createGoal.getGoal();
+      expect(goalDefault.description).toBe('');
+    });
   });
 });
