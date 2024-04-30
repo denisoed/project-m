@@ -1,4 +1,4 @@
-# Pixel Ton
+# Boost Motivation
 
 ## Project structure
 
