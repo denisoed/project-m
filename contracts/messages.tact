@@ -1,5 +1,6 @@
 message MCreateGoal {
   creator: Address;
+  executor: Address;
   description: String;
   reward: Int;
 }

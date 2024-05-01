@@ -51,10 +51,12 @@ describe('CreateGoal', () => {
 
   describe('Create & Confirm goal', () => {
     let creator: SandboxContract<TreasuryContract>;
+    let executor: SandboxContract<TreasuryContract>;
     let createdGoal: SendMessageResult;
 
     beforeEach(async () => {
       creator = await blockchain.treasury('creator');
+      executor = await blockchain.treasury('executor');
       // Add balance to contract
       await createGoal.send(
         creator.getSender(),
@@ -71,109 +73,113 @@ describe('CreateGoal', () => {
         {
           $$type: 'MCreateGoal',
           creator: creator.address,
+          executor: executor.address,
           description: 'test',
           reward: toNano('0.04'),
         },
       );
     });
 
-    it('should successfully create goal', async () => {
-      expect(createdGoal.transactions).toHaveTransaction({
-        from: creator.address,
-        to: createGoal.address,
-        success: true,
+    describe('Create goal', () => {
+      it('should successfully create goal', async () => {
+        expect(createdGoal.transactions).toHaveTransaction({
+          from: creator.address,
+          to: createGoal.address,
+          success: true,
+        });
       });
     });
 
-    it('if creator confirm the goal it should be true in state "confirmed"', async () => {
-      const confirmedGoal = await createGoal.send(
-        creator.getSender(),
-        {
-          value: toNano('0.02'),
-        },
-        {
-          $$type: 'MConfirmGoal',
-          creator: creator.address,
-        },
-      );
+    describe('Confirm goal', () => {
+      it('if creator confirm the goal it should be true in state "confirmed"', async () => {
+        const confirmedGoal = await createGoal.send(
+          creator.getSender(),
+          {
+            value: toNano('0.02'),
+          },
+          {
+            $$type: 'MConfirmGoal',
+            creator: creator.address,
+          },
+        );
 
-      expect(confirmedGoal.transactions).toHaveTransaction({
-        from: creator.address,
-        to: createGoal.address,
-        deploy: false,
-        success: true,
+        expect(confirmedGoal.transactions).toHaveTransaction({
+          from: creator.address,
+          to: createGoal.address,
+          deploy: false,
+          success: true,
+        });
+
+        const confirmed = await createGoal.getConfirmed();
+
+        expect(confirmed).toBeTruthy();
       });
 
-      const confirmed = await createGoal.getConfirmed();
+      it('if goal already confirmed it should be throw error', async () => {
+        const confirmedGoal = await createGoal.send(
+          creator.getSender(),
+          {
+            value: toNano('0.02'),
+          },
+          {
+            $$type: 'MConfirmGoal',
+            creator: creator.address,
+          },
+        );
 
-      expect(confirmed).toBeTruthy();
-    });
+        expect(confirmedGoal.transactions).toHaveTransaction({
+          from: creator.address,
+          to: createGoal.address,
+          deploy: false,
+          success: true,
+        });
 
-    it('if goal already confirmed it should be throw error', async () => {
-      const confirmedGoal = await createGoal.send(
-        creator.getSender(),
-        {
-          value: toNano('0.02'),
-        },
-        {
-          $$type: 'MConfirmGoal',
-          creator: creator.address,
-        },
-      );
+        const confirmed = await createGoal.getConfirmed();
 
-      expect(confirmedGoal.transactions).toHaveTransaction({
-        from: creator.address,
-        to: createGoal.address,
-        deploy: false,
-        success: true,
+        expect(confirmed).toBeTruthy();
+
+        const newConfirmGoal = await createGoal.send(
+          creator.getSender(),
+          {
+            value: toNano('0.02'),
+          },
+          {
+            $$type: 'MConfirmGoal',
+            creator: creator.address,
+          },
+        );
+
+        expect(newConfirmGoal.transactions).toHaveTransaction({
+          from: creator.address,
+          to: createGoal.address,
+          deploy: false,
+          success: false,
+        });
       });
 
-      const confirmed = await createGoal.getConfirmed();
+      it('if not creator confirm the goal it should be false in state "confirmed"', async () => {
+        const confirmedGoal = await createGoal.send(
+          executor.getSender(),
+          {
+            value: toNano('0.02'),
+          },
+          {
+            $$type: 'MConfirmGoal',
+            creator: executor.address,
+          },
+        );
 
-      expect(confirmed).toBeTruthy();
+        expect(confirmedGoal.transactions).toHaveTransaction({
+          from: executor.address,
+          to: createGoal.address,
+          deploy: false,
+          success: false,
+        });
 
-      const newConfirmGoal = await createGoal.send(
-        creator.getSender(),
-        {
-          value: toNano('0.02'),
-        },
-        {
-          $$type: 'MConfirmGoal',
-          creator: creator.address,
-        },
-      );
+        const confirmed = await createGoal.getConfirmed();
 
-      expect(newConfirmGoal.transactions).toHaveTransaction({
-        from: creator.address,
-        to: createGoal.address,
-        deploy: false,
-        success: false,
+        expect(confirmed).toBeFalsy();
       });
-    });
-
-    it('if not creator confirm the goal it should be false in state "confirmed"', async () => {
-      const notCreator = await blockchain.treasury('not-creator');
-      const confirmedGoal = await createGoal.send(
-        notCreator.getSender(),
-        {
-          value: toNano('0.02'),
-        },
-        {
-          $$type: 'MConfirmGoal',
-          creator: notCreator.address,
-        },
-      );
-
-      expect(confirmedGoal.transactions).toHaveTransaction({
-        from: notCreator.address,
-        to: createGoal.address,
-        deploy: false,
-        success: false,
-      });
-
-      const confirmed = await createGoal.getConfirmed();
-
-      expect(confirmed).toBeFalsy();
     });
   });
 });
