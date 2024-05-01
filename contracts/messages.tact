@@ -1,8 +1,8 @@
 message MCreateGoal {
-  owner: Address;
+  creator: Address;
   description: String;
   reward: Int;
 }
 message MConfirmGoal {
-  owner: Address;
+  creator: Address;
 }
