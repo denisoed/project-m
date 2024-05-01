@@ -48,12 +48,9 @@ describe('CreateGoal', () => {
       },
       {
         $$type: 'MCreateGoal',
-        id: 0n,
         owner: owner.address,
         description: 'test',
-        confirmations: 2n,
         reward: 1n,
-        confirmed: false,
       },
     );
 
@@ -66,13 +63,60 @@ describe('CreateGoal', () => {
 
   describe('Default state', () => {
     it('should be false "confirmed"', async () => {
-      const goalDefault = await createGoal.getGoal();
-      expect(goalDefault.confirmed).toBe(false);
+      const confirmed = await createGoal.getConfirmed();
+      expect(confirmed).toBe(false);
     });
 
     it('should be empty string "description"', async () => {
       const goalDefault = await createGoal.getGoal();
       expect(goalDefault.description).toBe('');
+    });
+  });
+
+  describe('Confirm goal', () => {
+    it('if owner confirm the goal it should be true in state "confirmed"', async () => {
+      const owner = await blockchain.treasury('owner');
+      const createdGoal = await createGoal.send(
+        owner.getSender(),
+        {
+          value: toNano('0.02'),
+        },
+        {
+          $$type: 'MCreateGoal',
+          owner: owner.address,
+          description: 'test',
+          reward: 1n,
+        },
+      );
+
+      expect(createdGoal.transactions).toHaveTransaction({
+        from: owner.address,
+        to: createGoal.address,
+        deploy: false,
+        success: true,
+      });
+
+      const confirmedGoal = await createGoal.send(
+        owner.getSender(),
+        {
+          value: toNano('0.02'),
+        },
+        {
+          $$type: 'MConfirmGoal',
+          owner: owner.address,
+        },
+      );
+
+      expect(confirmedGoal.transactions).toHaveTransaction({
+        from: owner.address,
+        to: createGoal.address,
+        deploy: false,
+        success: true,
+      });
+
+      const confirmed = await createGoal.getConfirmed();
+
+      expect(confirmed).toBeTruthy();
     });
   });
 });
