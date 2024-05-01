@@ -3,8 +3,7 @@ import { CreateGoal } from '../wrappers/CreateGoal';
 import { NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
-  const sender = provider.sender();
-  const createGoal = provider.open(await CreateGoal.fromInit(sender.address!));
+  const createGoal = provider.open(await CreateGoal.fromInit());
 
   await createGoal.send(
     provider.sender(),
