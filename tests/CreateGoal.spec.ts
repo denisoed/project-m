@@ -34,11 +34,6 @@ describe('CreateGoal', () => {
     });
   });
 
-  it('should deploy', async () => {
-    // the check is done inside beforeEach
-    // blockchain and createGoal are ready to use
-  });
-
   it('should successfully create goal', async () => {
     const owner = await blockchain.treasury('owner');
     const createdGoal = await createGoal.send(
@@ -49,6 +44,7 @@ describe('CreateGoal', () => {
       {
         $$type: 'MCreateGoal',
         owner: owner.address,
+        executor: owner.address,
         description: 'test',
         reward: 1n,
       },
@@ -84,6 +80,7 @@ describe('CreateGoal', () => {
         {
           $$type: 'MCreateGoal',
           owner: owner.address,
+          executor: owner.address,
           description: 'test',
           reward: 1n,
         },
@@ -117,6 +114,117 @@ describe('CreateGoal', () => {
       const confirmed = await createGoal.getConfirmed();
 
       expect(confirmed).toBeTruthy();
+    });
+
+    it('if goal already confirmed it should be throw error', async () => {
+      const owner = await blockchain.treasury('owner');
+      const createdGoal = await createGoal.send(
+        owner.getSender(),
+        {
+          value: toNano('0.02'),
+        },
+        {
+          $$type: 'MCreateGoal',
+          owner: owner.address,
+          executor: owner.address,
+          description: 'test',
+          reward: 1n,
+        },
+      );
+
+      expect(createdGoal.transactions).toHaveTransaction({
+        from: owner.address,
+        to: createGoal.address,
+        deploy: false,
+        success: true,
+      });
+
+      const confirmedGoal = await createGoal.send(
+        owner.getSender(),
+        {
+          value: toNano('0.02'),
+        },
+        {
+          $$type: 'MConfirmGoal',
+          owner: owner.address,
+        },
+      );
+
+      expect(confirmedGoal.transactions).toHaveTransaction({
+        from: owner.address,
+        to: createGoal.address,
+        deploy: false,
+        success: true,
+      });
+
+      const confirmed = await createGoal.getConfirmed();
+
+      expect(confirmed).toBeTruthy();
+
+      const confirmGoal = await createGoal.send(
+        owner.getSender(),
+        {
+          value: toNano('0.02'),
+        },
+        {
+          $$type: 'MConfirmGoal',
+          owner: owner.address,
+        },
+      );
+
+      expect(confirmGoal.transactions).toHaveTransaction({
+        from: owner.address,
+        to: createGoal.address,
+        deploy: false,
+        success: false,
+      });
+    });
+
+    it('if not owner confirm the goal it should be false in state "confirmed"', async () => {
+      const owner = await blockchain.treasury('owner');
+      const createdGoal = await createGoal.send(
+        owner.getSender(),
+        {
+          value: toNano('0.02'),
+        },
+        {
+          $$type: 'MCreateGoal',
+          owner: owner.address,
+          executor: owner.address,
+          description: 'test',
+          reward: 1n,
+        },
+      );
+
+      expect(createdGoal.transactions).toHaveTransaction({
+        from: owner.address,
+        to: createGoal.address,
+        deploy: false,
+        success: true,
+      });
+
+      const notOwner = await blockchain.treasury('not-owner');
+      const confirmedGoal = await createGoal.send(
+        notOwner.getSender(),
+        {
+          value: toNano('0.02'),
+        },
+        {
+          $$type: 'MConfirmGoal',
+          owner: notOwner.address,
+        },
+      );
+
+      expect(confirmedGoal.transactions).toHaveTransaction({
+        from: notOwner.address,
+        to: createGoal.address,
+        deploy: false,
+        success: false,
+      });
+
+      const confirmed = await createGoal.getConfirmed();
+
+      expect(confirmed).toBeFalsy();
     });
   });
 });
