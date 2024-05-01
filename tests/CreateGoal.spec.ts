@@ -138,7 +138,7 @@ describe('CreateGoal', () => {
 
       expect(confirmed).toBeTruthy();
 
-      const confirmGoal = await createGoal.send(
+      const newConfirmGoal = await createGoal.send(
         creator.getSender(),
         {
           value: toNano('0.02'),
@@ -149,7 +149,7 @@ describe('CreateGoal', () => {
         },
       );
 
-      expect(confirmGoal.transactions).toHaveTransaction({
+      expect(newConfirmGoal.transactions).toHaveTransaction({
         from: creator.address,
         to: createGoal.address,
         deploy: false,
