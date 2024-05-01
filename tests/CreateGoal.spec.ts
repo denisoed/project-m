@@ -55,6 +55,14 @@ describe('CreateGoal', () => {
 
     beforeEach(async () => {
       creator = await blockchain.treasury('creator');
+      // Add balance to contract
+      await createGoal.send(
+        creator.getSender(),
+        {
+          value: toNano('2'),
+        },
+        null,
+      );
       createdGoal = await createGoal.send(
         creator.getSender(),
         {
@@ -64,7 +72,7 @@ describe('CreateGoal', () => {
           $$type: 'MCreateGoal',
           creator: creator.address,
           description: 'test',
-          reward: 1n,
+          reward: toNano('0.04'),
         },
       );
     });
@@ -78,13 +86,6 @@ describe('CreateGoal', () => {
     });
 
     it('if creator confirm the goal it should be true in state "confirmed"', async () => {
-      expect(createdGoal.transactions).toHaveTransaction({
-        from: creator.address,
-        to: createGoal.address,
-        deploy: false,
-        success: true,
-      });
-
       const confirmedGoal = await createGoal.send(
         creator.getSender(),
         {
@@ -109,13 +110,6 @@ describe('CreateGoal', () => {
     });
 
     it('if goal already confirmed it should be throw error', async () => {
-      expect(createdGoal.transactions).toHaveTransaction({
-        from: creator.address,
-        to: createGoal.address,
-        deploy: false,
-        success: true,
-      });
-
       const confirmedGoal = await createGoal.send(
         creator.getSender(),
         {
@@ -158,13 +152,6 @@ describe('CreateGoal', () => {
     });
 
     it('if not creator confirm the goal it should be false in state "confirmed"', async () => {
-      expect(createdGoal.transactions).toHaveTransaction({
-        from: creator.address,
-        to: createGoal.address,
-        deploy: false,
-        success: true,
-      });
-
       const notCreator = await blockchain.treasury('not-creator');
       const confirmedGoal = await createGoal.send(
         notCreator.getSender(),

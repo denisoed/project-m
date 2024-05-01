@@ -7,12 +7,18 @@ contract CreateGoal with Deployable {
   description: String;
   reward: Int;
   confirmed: Bool;
+  balance: Int as coins;
   init(){
     self.owner = sender();
     self.creator = newAddress(0, 0);
     self.description = "";
-    self.reward = 0;
     self.confirmed = false;
+    self.reward = 0;
+    self.balance = 0;
+  }
+
+  receive(){
+    self.balance = context().value;
   }
 
   receive(msg: MCreateGoal){
@@ -25,6 +31,7 @@ contract CreateGoal with Deployable {
     let ctx: Context = context();
     require(!(self.confirmed), "Goal has already been confirmed");
     require(ctx.sender == self.creator, "Only creator can confirm goal");
+    require(self.reward < self.balance, "Balance should be higher than reward");
     self.confirmed = true;
   }
 
@@ -34,5 +41,9 @@ contract CreateGoal with Deployable {
 
   get fun confirmed(): Bool {
     return self.confirmed;
+  }
+
+  get fun balance(): Int {
+    return self.balance;
   }
 }
