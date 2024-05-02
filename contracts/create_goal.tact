@@ -25,6 +25,7 @@ contract CreateGoal with Deployable {
 
   receive(msg: MCreateGoal){
     require(msg.creator != msg.executor, "Creator and executor should be different");
+    require(msg.reward < self.balance, "Balance should be higher than reward");
     require(msg.reward > 0, "Reward should be higher than 0");
     self.creator = msg.creator;
     self.executor = msg.executor;
@@ -37,9 +38,9 @@ contract CreateGoal with Deployable {
     require(!(self.confirmed), "Goal has already been confirmed");
     require(ctx.sender == self.creator, "Only creator can confirm goal");
     require(self.reward < self.balance, "Balance should be higher than reward");
-    self.confirmed = true;
     self.balance = (self.balance - self.reward);
     send(SendParameters{to: self.executor, bounce: true, value: self.reward, mode: SendIgnoreErrors});
+    self.confirmed = true;
   }
 
   get fun goal(): MCreateGoal {
