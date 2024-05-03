@@ -97,13 +97,17 @@ describe('Goals', () => {
       });
     });
 
-    it('should successfully change nextGoalIndex & balance', async () => {
+    it('should successfully incremented nextGoalIndex to "1n"', async () => {
       const goalsData = await goals.getGoalsData();
       expect(goalsData.nextGoalIndex).toEqual(1n);
+    });
+
+    it('should successfully increased balance to "2" coins', async () => {
+      const goalsData = await goals.getGoalsData();
       expect(goalsData.balance).toEqual(BALANCE);
     });
 
-    it('should be the address of the creator in the new goal', async () => {
+    it('should be set the address of the creator in the new goal', async () => {
       const goalAddress = await goals.getGoalItemAddressByIndex(0n);
       const goalItem = blockchain.openContract(await GoalItem.fromAddress(goalAddress!));
       const goalItemData = await goalItem.getGoalData();
