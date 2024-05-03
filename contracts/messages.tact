@@ -7,3 +7,6 @@ message MCreateGoal {
 message MConfirmGoal {
   creator: Address;
 }
+message MCreateGoalItem {
+  creator: Address;
+}
