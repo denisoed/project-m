@@ -5,6 +5,7 @@ import { GoalItem } from '../wrappers/GoalItem';
 import '@ton/test-utils';
 
 const BALANCE = toNano('2');
+const REWARD = toNano('0.04');
 
 describe('GoalParent', () => {
   let blockchain: Blockchain;
@@ -61,6 +62,8 @@ describe('GoalParent', () => {
     let creator: SandboxContract<TreasuryContract>;
     let executor: SandboxContract<TreasuryContract>;
     let createdGoal: SendMessageResult;
+    let goalItem: SandboxContract<GoalItem>;
+    let goalItemData: any;
 
     beforeEach(async () => {
       creator = await blockchain.treasury('creator');
@@ -84,9 +87,13 @@ describe('GoalParent', () => {
           creator: creator.address,
           executor: executor.address,
           description: 'test',
-          reward: toNano('0.04'),
+          reward: REWARD,
         },
       );
+
+      const goalAddress = await goalParent.getGoalItemAddressByIndex(0n);
+      goalItem = blockchain.openContract(await GoalItem.fromAddress(goalAddress!));
+      goalItemData = await goalItem.getGoalData();
     });
 
     it('should successfully created goal', async () => {
@@ -108,10 +115,19 @@ describe('GoalParent', () => {
     });
 
     it('should be set the address of the creator in the new goal', async () => {
-      const goalAddress = await goalParent.getGoalItemAddressByIndex(0n);
-      const goalItem = blockchain.openContract(await GoalItem.fromAddress(goalAddress!));
-      const goalItemData = await goalItem.getGoalData();
       expect(goalItemData.creator?.toString()).toEqual(creator.address.toString());
+    });
+
+    it('should be set the address of the executor in the new goal', async () => {
+      expect(goalItemData.executor?.toString()).toEqual(executor.address.toString());
+    });
+
+    it('should be set the description in the new goal', async () => {
+      expect(goalItemData.description).toEqual('test');
+    });
+
+    it('should be set the reward in the new goal', async () => {
+      expect(goalItemData.reward).toEqual(REWARD);
     });
   });
 });

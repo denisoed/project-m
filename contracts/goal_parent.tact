@@ -38,7 +38,12 @@ contract GoalParent with Deployable {
         mode: SendIgnoreErrors,
         code: goalInit.code,
         data: goalInit.data,
-        body: MCreateGoalItem{creator: msg.creator}.toCell()
+        body: MCreateGoalItem{
+          creator: msg.creator,
+          executor: msg.executor,
+          description: msg.description,
+          reward: msg.reward
+        }.toCell()
       }
     );
     self.nextGoalIndex = (self.nextGoalIndex + 1);
