@@ -1,11 +1,11 @@
 import { toNano } from '@ton/core';
-import { Goals } from '../wrappers/Goals';
+import { GoalParent } from '../wrappers/GoalParent';
 import { NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
-  const goals = provider.open(await Goals.fromInit());
+  const goalParent = provider.open(await GoalParent.fromInit());
 
-  await goals.send(
+  await goalParent.send(
     provider.sender(),
     {
       value: toNano('0.05'),
@@ -16,7 +16,7 @@ export async function run(provider: NetworkProvider) {
     },
   );
 
-  await provider.waitForDeploy(goals.address);
+  await provider.waitForDeploy(goalParent.address);
 
-  // run methods on `goals`
+  // run methods on `goalParent`
 }

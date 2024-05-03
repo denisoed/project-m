@@ -5,7 +5,7 @@ import "./structs";
 const minTonsForStorage: Int = ton("0.02");
 const gasConsumption: Int = ton("0.02");
 
-contract Goals with Deployable {
+contract GoalParent with Deployable {
   owner: Address; // Contract owner
   balance: Int as coins;
   nextGoalIndex: Int;
@@ -50,8 +50,8 @@ contract Goals with Deployable {
 
   // ----- Public function ----- //
 
-  get fun goalsData(): SGoalsData {
-    return SGoalsData{nextGoalIndex: self.nextGoalIndex, balance: self.balance, owner: self.owner};
+  get fun goalParentData(): SGoalParentData {
+    return SGoalParentData{nextGoalIndex: self.nextGoalIndex, balance: self.balance, owner: self.owner};
   }
 
   get fun goalItemAddressByIndex(index: Int): Address? {

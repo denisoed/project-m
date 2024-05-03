@@ -1,9 +1,9 @@
-struct SGoalsData {
+struct SGoalParentData {
   owner: Address;
   balance: Int as coins;
   nextGoalIndex: Int;
 }
-struct SGoalData {
+struct SGoalItemData {
   index: Int;
   creator: Address?;
 }

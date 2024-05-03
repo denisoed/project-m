@@ -13,7 +13,7 @@ contract GoalItem with Deployable {
     self.creator = msg.creator;
   }
 
-  get fun goalData(): SGoalData {
-    return SGoalData{index: self.index, creator: self.creator};
+  get fun goalData(): SGoalItemData {
+    return SGoalItemData{index: self.index, creator: self.creator};
   }
 }
