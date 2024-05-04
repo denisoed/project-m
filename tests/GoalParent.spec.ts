@@ -170,16 +170,6 @@ describe('GoalParent', () => {
       it('should be true in state "confirmed" in the new goal', async () => {
         goalItemData = await goalItemContract.getGoalData();
         expect(goalItemData.confirmed).toBeTruthy();
-        await goalParentContract.send(
-          owner.getSender(),
-          {
-            value: MIN_TRANSACTION_FEE,
-          },
-          {
-            $$type: 'MConfirmGoal',
-            index: 0n,
-          },
-        );
       });
     });
   });
