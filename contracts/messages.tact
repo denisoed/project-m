@@ -4,14 +4,11 @@ message MCreateGoal {
   reward: Int as coins;
 }
 message MConfirmGoal {
-  owner: Address;
+  index: Int;
 }
 message MCreateGoalItem {
   owner: Address;
   executor: Address;
   description: String;
   reward: Int as coins;
-}
-message MConfirmGoalItem {
-  balance: Int as coins;
 }

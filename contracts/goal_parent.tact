@@ -29,10 +29,25 @@ contract GoalParent with Deployable {
   }
 
   receive(msg: MConfirmGoal){
-    self.confirmGoalItem(self.nextGoalIndex);
+    let ctx: Context = context();
+    require(self.owner == ctx.sender, "Only owner can confirm goal");
+    let goalInit: StateInit = self.goalItemInit(msg.index);
+    send(SendParameters{
+        to: contractAddress(goalInit),
+        value: gasConsumption,
+        mode: SendIgnoreErrors,
+        code: goalInit.code,
+        data: goalInit.data,
+        body: "MConfirmGoalItem".asComment()
+      }
+    );
   }
 
   // ----- Private function ----- //
+
+  inline fun goalItemInit(index: Int): StateInit {
+    return initOf GoalItem(index);
+  }
 
   inline fun createGoalItem(index: Int, msg: MCreateGoal) {
     let goalInit: StateInit = self.goalItemInit(index);
@@ -51,23 +66,6 @@ contract GoalParent with Deployable {
       }
     );
     self.nextGoalIndex = (self.nextGoalIndex + 1);
-  }
-
-  inline fun confirmGoalItem(index: Int) {
-    let goalInit: StateInit = self.goalItemInit(index);
-    send(SendParameters{
-        to: contractAddress(goalInit),
-        value: gasConsumption,
-        mode: SendIgnoreErrors,
-        code: goalInit.code,
-        data: goalInit.data,
-        body: MConfirmGoalItem{balance: self.balance}.toCell()
-      }
-    );
-  }
-
-  inline fun goalItemInit(index: Int): StateInit {
-    return initOf GoalItem(index);
   }
 
   // ----- Public function ----- //

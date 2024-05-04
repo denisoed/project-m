@@ -6,13 +6,16 @@ contract GoalItem with Deployable {
   index: Int;
   confirmed: Bool;
   reward: Int as coins;
-  owner: Address?;
-  executor: Address?;
-  description: String?;
+  owner: Address;
+  executor: Address;
+  description: String;
   init(index: Int){
     self.index = index;
     self.confirmed = false;
     self.reward = 0;
+    self.owner = sender();
+    self.executor = newAddress(0, 0);
+    self.description = "";
   }
 
   receive(msg: MCreateGoalItem){
@@ -22,11 +25,8 @@ contract GoalItem with Deployable {
     self.reward = msg.reward;
   }
 
-  receive(msg: MConfirmGoalItem){
-    let ctx: Context = context();
+  receive("MConfirmGoalItem"){
     require(!(self.confirmed), "Goal has already been confirmed");
-    require(ctx.sender == self.owner, "Only owner can confirm goal");
-    require(self.reward < msg.balance, "Balance should be higher than reward");
     self.confirmed = true;
   }
 
