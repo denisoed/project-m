@@ -1,10 +1,10 @@
 import { Blockchain, SandboxContract, SendMessageResult, TreasuryContract } from '@ton/sandbox';
-import { toNano } from '@ton/core';
+import { fromNano, toNano } from '@ton/core';
 import { GoalParent } from '../wrappers/GoalParent';
 import { GoalItem } from '../wrappers/GoalItem';
 import '@ton/test-utils';
 
-const BALANCE = toNano('2');
+const CONTRACT_BALANCE = toNano('5');
 const REWARD = toNano('0.04');
 
 describe('GoalParent', () => {
@@ -12,6 +12,7 @@ describe('GoalParent', () => {
   let owner: SandboxContract<TreasuryContract>;
   let goalParentContract: SandboxContract<GoalParent>;
   let deployResult: SendMessageResult;
+  let ownerInitBalance: bigint;
 
   beforeEach(async () => {
     blockchain = await Blockchain.create();
@@ -19,6 +20,8 @@ describe('GoalParent', () => {
     goalParentContract = blockchain.openContract(await GoalParent.fromInit());
 
     owner = await blockchain.treasury('owner');
+
+    ownerInitBalance = await owner.getBalance();
 
     deployResult = await goalParentContract.send(
       owner.getSender(),
@@ -70,7 +73,7 @@ describe('GoalParent', () => {
       await goalParentContract.send(
         owner.getSender(),
         {
-          value: BALANCE,
+          value: CONTRACT_BALANCE,
         },
         null,
       );
@@ -103,7 +106,12 @@ describe('GoalParent', () => {
 
     it('should successfully increased balance to "2" coins', async () => {
       const goalParentData = await goalParentContract.getGoalParentData();
-      expect(goalParentData.balance).toEqual(BALANCE);
+      expect(goalParentData.balance).toEqual(CONTRACT_BALANCE);
+    });
+
+    it('should successfully de-balanced the owner', async () => {
+      const newOwnerBalance = await owner.getBalance();
+      expect(newOwnerBalance).toBeLessThan(ownerInitBalance - CONTRACT_BALANCE);
     });
 
     it('should successfully incremented nextGoalIndex to "1n"', async () => {

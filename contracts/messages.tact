@@ -12,3 +12,6 @@ message MCreateGoalItem {
   description: String;
   reward: Int as coins;
 }
+message MConfirmGoalItem {
+  balance: Int as coins;
+}

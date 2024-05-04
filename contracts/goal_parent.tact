@@ -28,10 +28,14 @@ contract GoalParent with Deployable {
     self.createGoalItem(self.nextGoalIndex, msg);
   }
 
+  receive(msg: MConfirmGoal){
+    self.confirmGoalItem(self.nextGoalIndex);
+  }
+
   // ----- Private function ----- //
 
   inline fun createGoalItem(index: Int, msg: MCreateGoal) {
-    let goalInit: StateInit = self.goalItemInit(self.nextGoalIndex);
+    let goalInit: StateInit = self.goalItemInit(index);
     send(SendParameters{
         to: contractAddress(goalInit),
         value: gasConsumption,
@@ -47,6 +51,19 @@ contract GoalParent with Deployable {
       }
     );
     self.nextGoalIndex = (self.nextGoalIndex + 1);
+  }
+
+  inline fun confirmGoalItem(index: Int) {
+    let goalInit: StateInit = self.goalItemInit(index);
+    send(SendParameters{
+        to: contractAddress(goalInit),
+        value: gasConsumption,
+        mode: SendIgnoreErrors,
+        code: goalInit.code,
+        data: goalInit.data,
+        body: MConfirmGoalItem{balance: self.balance}.toCell()
+      }
+    );
   }
 
   inline fun goalItemInit(index: Int): StateInit {
