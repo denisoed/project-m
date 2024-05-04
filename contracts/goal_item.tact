@@ -4,7 +4,7 @@ import "./structs";
 
 contract GoalItem with Deployable {
   index: Int;
-  creator: Address?;
+  owner: Address?;
   executor: Address?;
   description: String?;
   reward: Int? as coins;
@@ -13,7 +13,7 @@ contract GoalItem with Deployable {
   }
 
   receive(msg: MCreateGoalItem){
-    self.creator = msg.creator;
+    self.owner = msg.owner;
     self.executor = msg.executor;
     self.description = msg.description;
     self.reward = msg.reward;
@@ -23,7 +23,7 @@ contract GoalItem with Deployable {
     return
       SGoalItemData{
         index: self.index,
-        creator: self.creator,
+        owner: self.owner,
         executor: self.executor,
         description: self.description,
         reward: self.reward

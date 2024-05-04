@@ -21,7 +21,7 @@ contract GoalParent with Deployable {
   }
 
   receive(msg: MCreateGoal){
-    require(msg.creator != msg.executor, "Creator and executor should be different");
+    require(self.owner != msg.executor, "Owner and executor should be different");
     require(msg.reward < self.balance, "Balance should be higher than reward");
     require(msg.reward > 0, "Reward should be higher than 0");
     require(self.nextGoalIndex >= 0, "Goal index is non-sequential");
@@ -39,7 +39,7 @@ contract GoalParent with Deployable {
         code: goalInit.code,
         data: goalInit.data,
         body: MCreateGoalItem{
-          creator: msg.creator,
+          owner: self.owner,
           executor: msg.executor,
           description: msg.description,
           reward: msg.reward

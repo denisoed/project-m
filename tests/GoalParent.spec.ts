@@ -9,19 +9,19 @@ const REWARD = toNano('0.04');
 
 describe('GoalParent', () => {
   let blockchain: Blockchain;
-  let deployer: SandboxContract<TreasuryContract>;
-  let goalParent: SandboxContract<GoalParent>;
+  let owner: SandboxContract<TreasuryContract>;
+  let goalParentContract: SandboxContract<GoalParent>;
   let deployResult: SendMessageResult;
 
   beforeEach(async () => {
     blockchain = await Blockchain.create();
 
-    goalParent = blockchain.openContract(await GoalParent.fromInit());
+    goalParentContract = blockchain.openContract(await GoalParent.fromInit());
 
-    deployer = await blockchain.treasury('deployer');
+    owner = await blockchain.treasury('owner');
 
-    deployResult = await goalParent.send(
-      deployer.getSender(),
+    deployResult = await goalParentContract.send(
+      owner.getSender(),
       {
         value: toNano('0.05'),
       },
@@ -32,101 +32,98 @@ describe('GoalParent', () => {
     );
   });
 
-  it('should deploy', async () => {
+  it('should deploy', () => {
     expect(deployResult.transactions).toHaveTransaction({
-      from: deployer.address,
-      to: goalParent.address,
+      from: owner.address,
+      to: goalParentContract.address,
       deploy: true,
       success: true,
     });
   });
 
   describe('Default state', () => {
-    it('should be owner "deployer"', async () => {
-      const goalParentData = await goalParent.getGoalParentData();
-      expect(goalParentData.owner.toString()).toEqual(deployer.address.toString());
+    it('should be owner', async () => {
+      const goalParentData = await goalParentContract.getGoalParentData();
+      expect(goalParentData.owner.toString()).toEqual(owner.address.toString());
     });
 
     it('should be balance "0"', async () => {
-      const goalParentData = await goalParent.getGoalParentData();
+      const goalParentData = await goalParentContract.getGoalParentData();
       expect(goalParentData.balance).toEqual(0n);
     });
 
     it('should be nextGoalIndex "0"', async () => {
-      const goalParentData = await goalParent.getGoalParentData();
+      const goalParentData = await goalParentContract.getGoalParentData();
       expect(goalParentData.nextGoalIndex).toEqual(0n);
     });
   });
 
   describe('Create goal', () => {
-    let creator: SandboxContract<TreasuryContract>;
     let executor: SandboxContract<TreasuryContract>;
     let createdGoal: SendMessageResult;
     let goalItem: SandboxContract<GoalItem>;
     let goalItemData: any;
 
     beforeEach(async () => {
-      creator = await blockchain.treasury('creator');
       executor = await blockchain.treasury('executor');
       // Add balance to contract
-      await goalParent.send(
-        creator.getSender(),
+      await goalParentContract.send(
+        owner.getSender(),
         {
           value: BALANCE,
         },
         null,
       );
 
-      createdGoal = await goalParent.send(
-        creator.getSender(),
+      createdGoal = await goalParentContract.send(
+        owner.getSender(),
         {
           value: toNano('0.02'),
         },
         {
           $$type: 'MCreateGoal',
-          creator: creator.address,
           executor: executor.address,
           description: 'test',
           reward: REWARD,
         },
       );
 
-      const goalAddress = await goalParent.getGoalItemAddressByIndex(0n);
+      const goalAddress = await goalParentContract.getGoalItemAddressByIndex(0n);
       goalItem = blockchain.openContract(await GoalItem.fromAddress(goalAddress!));
       goalItemData = await goalItem.getGoalData();
     });
 
-    it('should successfully created goal', async () => {
+    it('should successfully created goal', () => {
       expect(createdGoal.transactions).toHaveTransaction({
-        from: creator.address,
-        to: goalParent.address,
+        from: owner.address,
+        to: goalParentContract.address,
         success: true,
       });
     });
 
-    it('should successfully incremented nextGoalIndex to "1n"', async () => {
-      const goalParentData = await goalParent.getGoalParentData();
-      expect(goalParentData.nextGoalIndex).toEqual(1n);
-    });
-
     it('should successfully increased balance to "2" coins', async () => {
-      const goalParentData = await goalParent.getGoalParentData();
+      const goalParentData = await goalParentContract.getGoalParentData();
       expect(goalParentData.balance).toEqual(BALANCE);
     });
 
-    it('should be set the address of the creator in the new goal', async () => {
-      expect(goalItemData.creator?.toString()).toEqual(creator.address.toString());
+    it('should successfully incremented nextGoalIndex to "1n"', async () => {
+      const goalParentData = await goalParentContract.getGoalParentData();
+      expect(goalParentData.nextGoalIndex).toEqual(1n);
     });
 
-    it('should be set the address of the executor in the new goal', async () => {
+    it('should be set the address of the owner in the new goal', () => {
+      expect(goalItemData.owner?.toString()).toEqual(owner.address.toString());
+    });
+
+    it('should be set the address of the executor in the new goal', () => {
       expect(goalItemData.executor?.toString()).toEqual(executor.address.toString());
     });
 
-    it('should be set the description in the new goal', async () => {
+    it('should be set the description in the new goal', () => {
       expect(goalItemData.description).toEqual('test');
     });
 
-    it('should be set the reward in the new goal', async () => {
+    it('should be set the reward in the new goal', () => {
       expect(goalItemData.reward).toEqual(REWARD);
     });
   });
