@@ -5,8 +5,9 @@ struct SGoalParentData {
 }
 struct SGoalItemData {
   index: Int;
-  creator: Address?;
-  executor: Address?;
-  description: String?;
-  reward: Int? as coins;
+  confirmed: Bool;
+  owner: Address;
+  executor: Address;
+  description: String;
+  reward: Int as coins;
 }

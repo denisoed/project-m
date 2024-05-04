@@ -21,17 +21,36 @@ contract GoalParent with Deployable {
   }
 
   receive(msg: MCreateGoal){
-    require(msg.creator != msg.executor, "Creator and executor should be different");
+    require(self.owner != msg.executor, "Owner and executor should be different");
     require(msg.reward < self.balance, "Balance should be higher than reward");
     require(msg.reward > 0, "Reward should be higher than 0");
     require(self.nextGoalIndex >= 0, "Goal index is non-sequential");
     self.createGoalItem(self.nextGoalIndex, msg);
   }
 
+  receive(msg: MConfirmGoal){
+    let ctx: Context = context();
+    require(self.owner == ctx.sender, "Only owner can confirm goal");
+    let goalInit: StateInit = self.goalItemInit(msg.index);
+    send(SendParameters{
+        to: contractAddress(goalInit),
+        value: gasConsumption,
+        mode: SendIgnoreErrors,
+        code: goalInit.code,
+        data: goalInit.data,
+        body: "MConfirmGoalItem".asComment()
+      }
+    );
+  }
+
   // ----- Private function ----- //
 
+  inline fun goalItemInit(index: Int): StateInit {
+    return initOf GoalItem(index);
+  }
+
   inline fun createGoalItem(index: Int, msg: MCreateGoal) {
-    let goalInit: StateInit = self.goalItemInit(self.nextGoalIndex);
+    let goalInit: StateInit = self.goalItemInit(index);
     send(SendParameters{
         to: contractAddress(goalInit),
         value: gasConsumption,
@@ -39,7 +58,7 @@ contract GoalParent with Deployable {
         code: goalInit.code,
         data: goalInit.data,
         body: MCreateGoalItem{
-          creator: msg.creator,
+          owner: self.owner,
           executor: msg.executor,
           description: msg.description,
           reward: msg.reward
@@ -47,10 +66,6 @@ contract GoalParent with Deployable {
       }
     );
     self.nextGoalIndex = (self.nextGoalIndex + 1);
-  }
-
-  inline fun goalItemInit(index: Int): StateInit {
-    return initOf GoalItem(index);
   }
 
   // ----- Public function ----- //

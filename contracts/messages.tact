@@ -1,14 +1,13 @@
 message MCreateGoal {
-  creator: Address;
   executor: Address;
   description: String;
   reward: Int as coins;
 }
 message MConfirmGoal {
-  creator: Address;
+  index: Int;
 }
 message MCreateGoalItem {
-  creator: Address;
+  owner: Address;
   executor: Address;
   description: String;
   reward: Int as coins;
