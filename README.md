@@ -1,84 +1,84 @@
-# Project "M" - Система управления целями и мотивацией сотрудников
+# Project "M" - System of management of goals and motivation of employees
 
-## О проекте
+## About Project
 
-Наш проект представляет собой инновационную систему, позволяющую компаниям создавать стратегии мотивации для сотрудников с использованием блокчейна TON. Система основана на смарт-контрактах и позволяет компаниям устанавливать цели, которые направлены на достижение стратегических бизнес-целей, таких как увеличение продуктивности, рост прибыли и развитие бизнеса.
+Our project is an innovative system that allows companies to create motivation strategies for employees using the TON blockchain. The system is based on smart contracts and allows companies to set goals that address strategic business objectives such as increased productivity, profit growth and business development.
 
-### Основные функции и особенности
+### Key Features and Functions
 
-- Компании могут создавать цели, соответствующие их стратегии и бизнес-целям, и предлагать сотрудникам вознаграждения за их достижение.
-- Сотрудники могут получать вознаграждения в виде криптовалюты за достижение целей, что стимулирует их к более эффективной работе и вкладу в достижение стратегических целей компании.
-- Система позволяет компаниям удерживать и мотивировать сотрудников, предоставляя им возможность участвовать в достижении ключевых бизнес-целей.
+- Companies can create goals that align with their strategy and business objectives and offer employees rewards for achieving them.
+- Employees can receive rewards in the form of cryptocurrency for achieving goals, which incentivises them to work more efficiently and contribute to the company's strategic goals.
+- The system allows companies to retain and motivate employees by giving them the opportunity to participate in achieving key business goals.
 
-### Цель проекта
+### Project Objective
 
-Предоставить компаниям инструмент для эффективного управления мотивацией сотрудников, выстраивания бизнес-стратегии и достижения стратегических целей компании.
+To provide companies with a tool to effectively manage employee motivation, build business strategy and achieve the company's strategic goals.
 
-### Преимущества проекта
+### Benefits of the project
 
-- Возможность компаниям создавать мотивирующие стратегии, соответствующие их бизнес-целям.
-- Прозрачность и надежность благодаря использованию блокчейна и смарт-контрактов.
-- Увеличение эффективности бизнеса за счет более эффективного управления мотивацией и целями сотрудников.
+- Enable companies to create motivational strategies that align with their business goals.
+- Transparency and reliability through the use of blockchain and smart contracts.
+- Increased business efficiency through better management of employee motivation and goals.
 
-## Технический обзор
+## Technical Overview
 
-### Архитектура
+### Architecture
 
-Проект построен на платформе Telegram с использованием блокчейна TON для основной функциональности. Смарт-контракты, написанные на языке Tact, развертываются на блокчейне TON для управления процессом установки целей и распределения вознаграждений.
+The project is built on the Telegram platform using the TON blockchain for core functionality. Smart contracts written in Tact are deployed on the TON blockchain to manage goal setting and reward distribution.
 
-### Взаимодействие с пользователем
+### User Interaction
 
-Пользователи взаимодействуют с системой через интерфейс Telegram-бота. Они могут создавать цели, отслеживать их выполнение и получать вознаграждения непосредственно в приложении Telegram.
+Users interact with the system through a Telegram bot interface. They can create goals, track their completion, and receive rewards directly in the Telegram app.
 
-### Создание целей
+### Target creation
 
-При создании цели на блокчейне TON развертывается смарт-контракт, включающий описание цели, условия ее выполнения и сумму вознаграждения.
+When a goal is created, a smart contract is deployed on the TON blockchain, including a description of the goal, the conditions of fulfilment and the reward amount.
 
-### Отслеживание прогресса целей
+### Tracking Goal Progress
 
-Система отслеживает прогресс выполнения каждой цели на основе ввода пользователей. Например, если для цели требуется написать 10 статей, пользователь может обновлять прогресс в Telegram-боте по мере завершения каждой статьи.
+The system tracks the progress of each goal based on user input. For example, if a goal requires 10 articles to be written, the user can update the progress in the Telegram bot as each article is completed.
 
-### Подтверждение выполнения целей
+### Confirmation of goal completion
 
-После завершения цели пользователь отправляет ее на подтверждение через Telegram-бота. Другие пользователи системы могут подтвердить выполнение, проголосовав за это.
+When a goal is completed, the user sends the goal for confirmation via Telegram bot. Other users in the system can confirm completion by voting in favour.
 
-### Распределение вознаграждений
+### Reward distribution
 
-После подтверждения выполнения цели достаточным числом пользователей смарт-контракт автоматически распределяет вознаграждение на кошелек пользователя.
+Once enough users have confirmed the completion of a goal, the smart contract automatically distributes rewards to the user's wallet.
 
-### Интеграция с блокчейном
+### Blockchain Integration
 
-Использование блокчейна TON обеспечивает прозрачность и безопасность процесса установки целей и распределения вознаграждений. Все транзакции и взаимодействия с контрактами записываются в блокчейн, обеспечивая неизменность записей о достижениях и вознаграждениях.
+Using the TON blockchain provides transparency and security in the process of setting goals and distributing rewards. All transactions and contract interactions are recorded on the blockchain, ensuring that records of achievements and rewards are immutable.
 
-### Масштабируемость
+### Scalability
 
-Система разработана для масштабируемости, что позволяет добавлять новых пользователей и цели без ущерба производительности. Высокая пропускная способность и низкая задержка блокчейна TON обеспечивают эффективную обработку большого количества транзакций.
+The system is designed to be scalable, allowing new users and goals to be added without compromising performance. The high throughput and low latency of the TON blockchain ensures that a large number of transactions can be processed efficiently.
 
-### Вывод
+#### Conclusion
 
-Используя блокчейн TON и смарт-контракты, проект создает прозрачную и эффективную систему установки и достижения целей, обеспечивая пользователям безопасную и мотивирующую среду для личного и профессионального роста.
+Using the TON blockchain and smart contracts, the project creates a transparent and efficient system for setting and achieving goals, providing users with a secure and motivating environment for personal and professional growth.
 
-## Струкрура проекта
+## Project structure
 
-- `contracts` - исходный код всех смарт-контрактов проекта и их зависимостей.
-- `wrappers` - классы-обертки (реализующие `Contract` из ton-core) для контрактов, включая любые примитивы [де]сериализации и функции компиляции.
-- `tests` - тесты для контрактов.
-- `scripts` - скрипты, используемые в проекте, в основном скрипты развертывания.
+- `contracts` - source code of all smart contracts of the project and their dependencies.
+- `wrappers` - wrapper classes (implementing `Contract` from ton-core) for contracts, including any [de]serialisation primitives and compilation functions.
+- `tests` - tests for contracts.
+- `scripts` - scripts used in the project, mainly deployment scripts.
 
-## Разработка проекта
+## Design development
 
-### Сборка
+### Build
 
-`npx blueprint build` или `yarn blueprint build`
+`npx blueprint build` or `yarn blueprint build`
 
-### Тестирование
+### Testing
 
-`npx blueprint test` или `yarn blueprint test`
+`npx blueprint test` or `yarn blueprint test`
 
-### Запуск в режиме отладки
+### Run in debug mode
 
-`npx blueprint run` или `yarn blueprint run`
+`npx blueprint run` or `yarn blueprint run`
 
-### Создание нового контракта
+### Creating a new contract
 
-`npx blueprint create ContractName` или `yarn blueprint create ContractName`
+`npx blueprint create ContractName` or `yarn blueprint create ContractName`
