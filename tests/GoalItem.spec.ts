@@ -36,4 +36,19 @@ describe('GoalItem', () => {
       success: true,
     });
   });
+
+  it('should be true in state "confirmed"', async () => {
+    await goalItem.send(
+      owner.getSender(),
+      {
+        value: toNano('0.02'),
+      },
+      {
+        $$type: 'MConfirmGoalItem',
+        owner: owner.address,
+      },
+    );
+    const goalItemData = await goalItem.getGoalData();
+    expect(goalItemData.confirmed).toBeTruthy();
+  });
 });

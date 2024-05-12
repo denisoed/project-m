@@ -1,11 +1,12 @@
 import "@stdlib/deploy";
+import "@stdlib/ownable";
 import "./goal_item.tact";
 import "./messages";
 import "./structs";
 const minTonsForStorage: Int = ton("0.02");
 const gasConsumption: Int = ton("0.02");
 
-contract GoalParent with Deployable {
+contract GoalParent with Deployable, Ownable {
   owner: Address; // Contract owner
   balance: Int as coins;
   nextGoalIndex: Int;
@@ -29,8 +30,8 @@ contract GoalParent with Deployable {
   }
 
   receive(msg: MConfirmGoal){
+    self.requireOwner();
     let ctx: Context = context();
-    require(self.owner == ctx.sender, "Only owner can confirm goal");
     let goalInit: StateInit = self.goalItemInit(msg.index);
     send(SendParameters{
         to: contractAddress(goalInit),
@@ -38,7 +39,7 @@ contract GoalParent with Deployable {
         mode: SendIgnoreErrors,
         code: goalInit.code,
         data: goalInit.data,
-        body: "MConfirmGoalItem".asComment()
+        body: MConfirmGoalItem{owner: self.owner}.toCell()
       }
     );
   }

@@ -12,3 +12,10 @@ message MCreateGoalItem {
   description: String;
   reward: Int as coins;
 }
+message MConfirmGoalItem {
+  owner: Address;
+}
+message MSendReward {
+  executor: Address;
+  reward: Int as coins;
+}

@@ -25,8 +25,9 @@ contract GoalItem with Deployable {
     self.reward = msg.reward;
   }
 
-  receive("MConfirmGoalItem"){
+  receive(msg: MConfirmGoalItem){
     require(!(self.confirmed), "Goal has already been confirmed");
+    require(msg.owner == self.owner, "Only owner can confirm goal");
     self.confirmed = true;
   }
 
