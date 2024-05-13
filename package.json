@@ -7,7 +7,7 @@
     "email": "denisoed@gmail.com"
   },
   "scripts": {
-    "build": "blueprint build",
+    "build": "blueprint build --all",
     "deploy": "blueprint run",
     "test": "jest --verbose",
     "format": "prettier --write ."

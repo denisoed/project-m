@@ -2,7 +2,7 @@ import "@stdlib/deploy";
 import "./messages";
 import "./structs";
 
-contract GoalItem with Deployable {
+contract GoalItem {
   index: Int;
   confirmed: Bool;
   reward: Int as coins;
