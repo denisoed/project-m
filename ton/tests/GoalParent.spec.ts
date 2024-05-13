@@ -1,5 +1,5 @@
 import { Blockchain, SandboxContract, SendMessageResult, TreasuryContract } from '@ton/sandbox';
-import { toNano } from '@ton/core';
+import { toNano, fromNano } from '@ton/core';
 import { GoalParent } from '../wrappers/GoalParent';
 import { GoalItem } from '../wrappers/GoalItem';
 import '@ton/test-utils';
@@ -158,13 +158,16 @@ describe('GoalParent', () => {
         );
       });
 
-      it('should successfully confirmed', () => {
+      it('should successfully confirmed', async () => {
         expect(confirmedGoal.transactions).toHaveTransaction({
           from: owner.address,
           to: goalParentContract.address,
           deploy: false,
           success: true,
         });
+
+        const aaa = await owner.getBalance();
+        console.log(fromNano(aaa));
       });
 
       it('should be true in state "confirmed" in the new goal', async () => {
